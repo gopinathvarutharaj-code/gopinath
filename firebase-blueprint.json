@@ -1,0 +1,64 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "Customer order details including products and payment proof.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Customer name" },
+        "phone": { "type": "string", "description": "Customer WhatsApp number" },
+        "address": { "type": "string", "description": "Delivery address" },
+        "items": { 
+          "type": "array", 
+          "items": { "type": "object" },
+          "description": "List of products ordered"
+        },
+        "totalAmount": { "type": "number", "description": "Total order value" },
+        "screenshotUrl": { "type": "string", "description": "URL to the payment proof screenshot" },
+        "uid": { "type": "string", "description": "User ID of the customer" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Order timestamp" },
+        "status": { "type": "string", "enum": ["pending", "completed", "cancelled", "failed"], "description": "Order status" }
+      },
+      "required": ["name", "phone", "address", "items", "totalAmount", "uid", "createdAt", "status"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Product details for the farm store.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Product name" },
+        "price": { "type": "string", "description": "Price display string" },
+        "priceNum": { "type": "number", "description": "Numerical price" },
+        "img": { "type": "string", "description": "Image URL" }
+      },
+      "required": ["name", "price", "priceNum", "img"]
+    },
+    "Activity": {
+      "title": "Activity",
+      "description": "User activity log entry.",
+      "type": "object",
+      "properties": {
+        "type": { "type": "string", "description": "Type of activity" },
+        "details": { "type": "string", "description": "Activity details" },
+        "userId": { "type": "string", "description": "User ID" },
+        "userName": { "type": "string", "description": "User name" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Timestamp" }
+      },
+      "required": ["type", "details", "userId", "userName", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Collection of customer orders"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Collection of products"
+    },
+    "/activities/{activityId}": {
+      "schema": "Activity",
+      "description": "Collection of user activities"
+    }
+  }
+}

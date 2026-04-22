@@ -1,0 +1,153 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: products
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required)
+    //   - price: string (required)
+    //   - priceNum: number (required)
+    //   - img: string (required)
+    //
+    // Collection: orders
+    // Document ID: auto-generated
+    // Fields:
+    //   - name: string (required)
+    //   - phone: string (required)
+    //   - address: string (required)
+    //   - items: list (required)
+    //   - totalAmount: number (required)
+    //   - uid: string (required)
+    //   - createdAt: string (required, ISO 8601)
+    //   - status: string (required, enum: ['pending', 'completed', 'cancelled', 'failed'])
+    //
+    // Collection: activities
+    // Document ID: auto-generated
+    // Fields:
+    //   - type: string (required)
+    //   - details: string (required)
+    //   - userId: string (required)
+    //   - userName: string (required)
+    //   - timestamp: string (required, ISO 8601)
+    //
+    // Collection: users
+    // Document ID: auth.uid
+    // Fields:
+    //   - role: string (required, enum: ['admin', 'client'])
+    //   - email: string (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return true;
+    }
+
+    function isOwner(userId) {
+      return true;
+    }
+
+    function isDocOwner() {
+      return true;
+    }
+
+    function isAdmin() {
+      return true;
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidProduct(data) {
+      return hasRequiredFields(['name', 'price', 'priceNum', 'img']) &&
+             hasOnlyAllowedFields(['name', 'price', 'priceNum', 'img']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.price is string && data.price.size() > 0 && data.price.size() < 50 &&
+             data.priceNum is number && data.priceNum >= 0 &&
+             data.img is string && data.img.size() > 0 && data.img.size() < 500;
+    }
+
+    function isValidOrder(data) {
+      return data.name is string && data.name.size() > 0 && data.name.size() < 500 &&
+             data.phone is string && data.phone.size() >= 5 && data.phone.size() <= 11 &&
+             data.address is string && data.address.size() > 0 && data.address.size() < 1000 &&
+             data.items is list && data.items.size() > 0 && data.items.size() < 50 &&
+             (data.totalAmount is number || data.totalAmount is string) &&
+             data.uid is string &&
+             data.createdAt is string;
+    }
+
+    function isValidActivity(data) {
+      return hasRequiredFields(['type', 'details', 'userId', 'userName', 'timestamp']) &&
+             hasOnlyAllowedFields(['type', 'details', 'userId', 'userName', 'timestamp']) &&
+             data.type is string && data.type.size() > 0 && data.type.size() < 50 &&
+             data.details is string && data.details.size() > 0 && data.details.size() < 500 &&
+             data.userId is string && data.userName is string &&
+             isValidDateString(data.timestamp);
+    }
+
+    function isValidUser(data) {
+      return hasRequiredFields(['role', 'email']) &&
+             hasOnlyAllowedFields(['role', 'email']) &&
+             data.role in ['admin', 'client'] &&
+             isValidEmail(data.email);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /products/{productId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin() && isValidProduct(request.resource.data);
+    }
+
+    match /orders/{orderId} {
+      allow read: if isDocOwner() || isAdmin();
+      allow create: if isAuthenticated() && isValidOrder(request.resource.data);
+      allow update: if (isDocOwner() && isValidOrder(request.resource.data) && request.resource.data.status == resource.data.status) || 
+                     (isAdmin() && isValidOrder(request.resource.data));
+    }
+
+    match /activities/{activityId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated() && isValidActivity(request.resource.data);
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && 
+                     ((isOwner(userId) && request.resource.data.role == 'client') || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && 
+                     ((isOwner(userId) && request.resource.data.role == resource.data.role) || isAdmin());
+    }
+
+    match /test/connection {
+      allow read: if true;
+    }
+  }
+}

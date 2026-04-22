@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Farm - Premium Dairy & Poultry Products | Namakkal</title>
+    <meta name="description" content="Fresh Farm - Premium quality dairy & poultry products in Namakkal. Fresh milk, butter, curd, ghee, chicken & eggs. Order via WhatsApp!">
+    <meta name="theme-color" content="#2D5016">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    screens: {
+                        'xs': '400px',
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#4ade80', 
+                            dark: '#22c55e',
+                            brand: '#2D5016', 
+                        },
+                        cream: '#FDFCF8',
+                        natural: {
+                            light: '#F4F1EA',
+                            dark: '#E8E2D2'
+                        },
+                        foreground: '#1A1A1A',
+                    },
+                    boxShadow: {
+                      'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                      '3xl': '0 35px 60px -15px rgba(0, 0, 0, 0.25)',
+                    },
+                    borderRadius: {
+                      'xl': '1rem',
+                      '2xl': '1.5rem',
+                      '3xl': '2.5rem',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #1A1A1A;
+            background-color: #FDFCF8;
+        }
+
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .animate-in {
+          animation: animate-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          opacity: 0;
+        }
+        @keyframes animate-in {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-bounce-in {
+          animation: bounce-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          opacity: 0;
+        }
+        @keyframes bounce-in {
+          0% { opacity: 0; transform: scale(0.8) translateY(10px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+
+        @keyframes slide-in {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in {
+          animation: slide-in 0.4s ease-out forwards;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        ::selection {
+            background-color: #2D5016;
+            color: white;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F4F1EA;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D5016;
+            border-radius: 10px;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/": "https://esm.sh/react-dom@19.0.0/",
+    "react/": "https://esm.sh/react@19.0.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="antialiased">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
